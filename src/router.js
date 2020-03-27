@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import LoginComponent from "./components/Login.vue"
 import DashboardComponent from "./components/Dashboard.vue"
 import FacilityComponent from "./components/Facility.vue"
-import PasswordResetComponent from "./components/PasswordReset.vue"
 
 Vue.use(Router);
 
@@ -31,11 +30,6 @@ export default new Router({
             path: '/facility/:entityID',
             name: 'facility',
             component: FacilityComponent
-        },
-        {
-            path: "/reset/:token",
-            name: 'reset',
-            component: PasswordResetComponent
         },
         {
             path: '*',
