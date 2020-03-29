@@ -13,17 +13,17 @@ import axios from "axios";
 
 Vue.use(BootstrapVue);
 Vue.use(VueCookies);
-Vue.use(VueJWT,{storage:'cookie'});
+Vue.use(VueJWT, { storage: 'cookie' });
 
 Vue.config.productionTip = false;
 
 router.beforeEach((to, from, next) => {
-  if(Vue.$cookies.get('Health_Auth')) {
+  if (Vue.$cookies.get('Health_Auth')) {
     next();
-  } else if(to.name == 'reset' && !store.state.authenticated){
+  } else if (to.name == 'reset' && !store.state.authenticated) {
     next();
-  }else if (to.name !== 'login' && !store.state.authenticated) {
-    next({name: 'login'});
+  } else if (to.name !== 'login' && !store.state.authenticated) {
+    next({ name: 'login' });
   } else {
     next();
   }
@@ -32,56 +32,6 @@ router.beforeEach((to, from, next) => {
 Vue.filter('phone', function (phone) {
   return phone.replace(/[^0-9]/g, '')
       .replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
-});
-
-Vue.filter('numberToLetter', function (number) {
-  switch(number) {
-    case 0:
-      return "A";
-    case 1:
-      return "B";
-    case 2:
-      return "C";
-    case 3:
-      return "D";
-    case 4:
-      return "E";
-    case 5:
-      return "F";
-    case 6:
-      return "G";
-    case 7:
-      return "H";
-    case 8:
-      return "I";
-    case 9:
-      return "J";
-    case 10:
-      return "K";
-  }
-
-});
-
-Vue.filter('timestamp', function(input) {
-  let now = new Date();
-  let date = new Date(input);
-  let ampm = date.getHours() >= 12 ? 'pm' : 'am';
-  let hours = date.getHours() % 12;
-  let formattedHours = hours ? hours : 12;
-  let isToday = (now.getDate() === date.getDate() &&
-      now.getMonth() === date.getMonth() &&
-      now.getFullYear() === date.getFullYear());
-  let isYesterday = (now.getDate() === date.getDate()+1 &&
-      now.getMonth() === date.getMonth() &&
-      now.getFullYear() === date.getFullYear());
-  let dateOutput = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + ' at ';
-  if(isToday) {
-    dateOutput = "Today at "
-  } else if(isYesterday) {
-    dateOutput = "Yesterday at "
-  }
-  return dateOutput + formattedHours + ':' +
-      (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ampm;
 });
 
 Vue.filter('nullToNone', function (value) {
@@ -99,14 +49,14 @@ new Vue({
     auth_token: "auth",
     auth_state: "authenticated"
   }),
-  data(){
+  data() {
     return {
       api: process.env.VUE_APP_BASE_API_URL,
       authenticated: false
     }
   },
   created: function () {
-    if(!this.authenticated && this.getTokenFromCookie()) {
+    if (!this.authenticated && this.getTokenFromCookie()) {
       this.authenticateUser(this.getTokenFromCookie());
     }
   },
@@ -118,11 +68,11 @@ new Vue({
       this.$emit("authenticated", true);
     },
     setAuthCookie(response) {
-      if(this.getTokenFromCookie() && this.getTokenFromCookie() !== response){
+      if (this.getTokenFromCookie() && this.getTokenFromCookie() !== response) {
         console.log("cookie looks different.");
         this.$cookies.remove('Health_Auth');
         this.$cookies.set('Health_Auth', response, '1D', null);
-      } else if(!this.getTokenFromCookie()) {
+      } else if (!this.getTokenFromCookie()) {
         console.log("no cookie detected. adding new cookie.");
         this.$cookies.set('Health_Auth', response, '1D', null);
       } else {
@@ -145,35 +95,54 @@ new Vue({
     apiGETRequest(endpoint, callback) {
       let self = this;
       axios
-          .get(self.api + endpoint, {
-            headers: {
-              'token': self.getSavedToken()
-            },
-          })
-          .then(function(response) {
-            callback(response.data);
-          })
-          .catch(function(err) {
-            console.log(err);
-            callback(false);
-          });
+        .get(self.api + endpoint, {
+          headers: {
+            'token': self.getSavedToken()
+          },
+        })
+        .then(function (response) {
+          callback(response.data);
+        })
+        .catch(function (err) {
+          console.log(err);
+          callback(false);
+        });
     },
     apiPUTRequest(endpoint, payload, callback) {
       let self = this;
       axios
-          .put(self.api + endpoint, payload, {
-            headers: {
-              'token': self.getSavedToken()
-            },
-          })
-          .then(function(response) {
-            callback(response);
-          })
-          .catch(function(err) {
-            console.log(err);
-            callback(false);
-          });
+        .put(self.api + endpoint, payload, {
+          headers: {
+            'token': self.getSavedToken()
+          },
+        })
+        .then(function (response) {
+          callback(response);
+        })
+        .catch(function (err) {
+          console.log(err);
+          callback(false);
+        });
     },
+    apiPOSTRequest(endpoint, payload, callback) {
+      let self = this;
+      console.log(self);
+      axios
+        .post(self.api + endpoint, payload, {
+          headers: {
+            'token': self.getSavedToken()
+          },
+        })
+        .then(function (response) {
+          console.log(response);
+          callback(response);
+        })
+        .catch(function (err) {
+          console.log(err);
+          callback(false);
+        });
+      console.log('ended');
+    }
   },
   router
 }).$mount('#app');
