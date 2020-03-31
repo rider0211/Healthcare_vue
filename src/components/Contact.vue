@@ -8,7 +8,7 @@
             <input required v-model="contact.name" />
           </b-form-group>
           <b-form-group id="contact-phone" label="Phone Number">
-            <input type="tel" v-model="contact.phone[0].number" />
+            <input type="text" minlength="10" maxlength="11" v-model="contact.phone[0].number" />
           </b-form-group>
           <b-form-group id="contact-email" label="Email Address">
             <input type="email" v-model="contact.email[0].address" />
@@ -64,7 +64,7 @@ export default {
       this.$router.push('/facility/' + this.$route.params.entityID);
     },
     submitForm() {
-      let newContact = this.duplicateData(this.contact);
+      let newContact = this.duplicateData(this.contact)
       newContact.phone = newContact.phone.filter(phone => !!phone.number);
       newContact.phone = newContact.phone.length > 0 ? newContact.phone : null;
       newContact.email = newContact.email.filter(email => !!email.address);

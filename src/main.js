@@ -30,12 +30,10 @@ router.beforeEach((to, from, next) => {
 });
 
 Vue.filter('phone', function (phone) {
-  let phoneClean = ('' + phone).replace(/\D/g, '').match(/^(1|)?(\d{3})(\d{3})(\d{4})$/)
-  if (phoneClean) {
-    let intlCode = (phoneClean[1] ? '+1 ' : '')
-    return [intlCode, '(', phoneClean[2], ') ', phoneClean[3], '-', phoneClean[4]].join('')
-  }
-  return null
+  let fmtNumber = phone.replace(/[^0-9]/g, '');
+  if (fmtNumber.length === 11)
+    return fmtNumber.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '$1($2) $3-$4');
+  return fmtNumber.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
 });
 
 Vue.filter('numberToLetter', function (number) {
