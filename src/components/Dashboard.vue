@@ -30,8 +30,6 @@
           striped
           hover
           sticky-header
-          :per-page="perPage"
-          :current-page="currentPage"
           :filter="filter"
           :filterIncludedFields="filterOn"
           :sort-by.sync="sortBy"
@@ -112,6 +110,7 @@ export default {
       }
     },
     onFiltered(filteredItems) {
+      console.log(this);
       this.rows = filteredItems.length;
       this.currentPage = 1;
     }
