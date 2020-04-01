@@ -31,27 +31,25 @@ router.beforeEach((to, from, next) => {
 
 Vue.filter('phone', function (phone) {
   let phoneClean = ('' + phone).replace(/\D/g, '');
-  if(phoneClean.charAt(0) === "1") {
-    phoneClean = phoneClean.slice(1);
-  }
+  let intlCode = (phoneClean.charAt(0) === "1" ? '+1 ' : false);
   let output = null;
-  if(phoneClean.length === 0){
+  if (phoneClean.length === 0) {
     output = '';
-  } else if(phoneClean.length > 0 && phoneClean.length <= 3) {
+  } else if (phoneClean.length > 0 && phoneClean.length <= 3) {
     output = '(' + phoneClean.substring(0, 3) + ')';
-  } else if(phoneClean.length >= 4 && phoneClean.length <= 6) {
+  } else if (phoneClean.length >= 4 && phoneClean.length <= 6) {
     output = '(' + phoneClean.substring(0, 3) + ') ' + phoneClean.substring(3, 6);
-  } else if(phoneClean.length >= 7 && phoneClean.length <= 10) {
+  } else if (phoneClean.length >= 7 && phoneClean.length <= 10) {
     output = '(' + phoneClean.substring(0, 3) + ') ' + phoneClean.substring(3, 6) + '-' + phoneClean.substring(6, 10);
-  } else if(phoneClean.length > 10) {
-    output = '(' + phoneClean.substring(0, 3) + ') ' + phoneClean.substring(3, 6) + '-' + phoneClean.substring(6, 10) + ' ext: ' + phoneClean.substring(10);
+  } else if (intlCode && phoneClean.length > 10) {
+    output = intlCode + '(' + phoneClean.substring(1, 4) + ') ' + phoneClean.substring(4, 7) + '-' + phoneClean.substring(6, 10);
   }
 
-  return '+1 ' + output
+  return output
 });
 
 Vue.filter('numberToLetter', function (number) {
-  switch(number) {
+  switch (number) {
     case 0:
       return "A";
     case 1:
@@ -78,30 +76,30 @@ Vue.filter('numberToLetter', function (number) {
 
 });
 
-Vue.filter('timestamp', function(input) {
+Vue.filter('timestamp', function (input) {
   let now = new Date();
   let date = new Date(input);
   let ampm = date.getHours() >= 12 ? 'pm' : 'am';
   let hours = date.getHours() % 12;
   let formattedHours = hours ? hours : 12;
   let isToday = (now.getDate() === date.getDate() &&
-      now.getMonth() === date.getMonth() &&
-      now.getFullYear() === date.getFullYear());
-  let isYesterday = (now.getDate() === date.getDate()+1 &&
-      now.getMonth() === date.getMonth() &&
-      now.getFullYear() === date.getFullYear());
+    now.getMonth() === date.getMonth() &&
+    now.getFullYear() === date.getFullYear());
+  let isYesterday = (now.getDate() === date.getDate() + 1 &&
+    now.getMonth() === date.getMonth() &&
+    now.getFullYear() === date.getFullYear());
   let dateOutput = (date.getMonth() + 1) + '/' + date.getDate() + '/' + date.getFullYear() + ' at ';
-  if(isToday) {
+  if (isToday) {
     dateOutput = "Today at "
-  } else if(isYesterday) {
+  } else if (isYesterday) {
     dateOutput = "Yesterday at "
   }
   return dateOutput + formattedHours + ':' +
-      (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ampm;
+    (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() + ampm;
 });
 
 Vue.filter('nullToNone', function (value) {
-  if(value == null) {
+  if (value == null) {
     return "None";
   } else {
     return value;
@@ -205,6 +203,18 @@ new Vue({
           console.log(err);
           callback(false);
         });
+    },
+    getStatuses() {
+      return [
+        "Spoke to owner. No follow-up needed.",
+        "Spoke to owner. Follow-up needed.",
+        "Spoke to someone besides owner. No follow-up needed.",
+        "Spoke to someone besides owner. Follow-up needed.",
+        "Called. No Answer. Left a message.",
+        "Called. No Answer. Did not leave a message.",
+        "Wrong number",
+        "No Previous Check-in"
+      ];
     }
   },
   router
