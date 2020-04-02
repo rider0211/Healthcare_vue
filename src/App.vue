@@ -41,8 +41,14 @@
     name: "App",
     data() {
       return {
-        user: this.$jwt.decode(this.$root.auth_token).email,
+        // user: "",
         disableBackBtn: ['dashboard', 'create-contact', 'update-contact', 'facility']
+      }
+    },
+    created() {
+      var decoded = this.$jwt.decode(this.$root.auth_token);
+      if(decoded){
+        this.user = decoded.email;
       }
     },
     methods: {
