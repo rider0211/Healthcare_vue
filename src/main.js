@@ -206,24 +206,6 @@ new Vue({
           callback(false);
         });
     },
-    apiDELRequest(endpoint, payload, callback) {
-      let self = this;
-      // requirement for axios
-      payload = {'data': payload};
-      axios
-        .delete(self.api + endpoint, payload, {
-          headers: {
-            'token': self.getSavedToken()
-          },
-        })
-        .then(function (response) {
-          callback(response);
-        })
-        .catch(function (err) {
-          console.log(err);
-          callback(false);
-        });
-    },
     getStatuses() {
       return [
         "Spoke to owner. No follow-up needed.",
