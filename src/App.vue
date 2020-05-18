@@ -16,13 +16,6 @@
             <b-nav-item v-on:click="goToDashboard()" v-if="this.$root.auth_state && showDashboardLink()">&larr; Return to Dashboard</b-nav-item>
           </b-navbar-nav>
           <b-navbar-nav class="ml-auto" v-if="this.$root.auth_state">
-              <b-nav-item-dropdown right>
-              <!-- Using 'button-content' slot -->
-              <template v-slot:button-content>
-                Management
-              </template>
-              <b-dropdown-item v-on:click="goToContacts()">Contacts</b-dropdown-item>
-            </b-nav-item-dropdown>
             <b-nav-item-dropdown right>
               <!-- Using 'button-content' slot -->
               <template v-slot:button-content>
@@ -66,20 +59,7 @@
         }
       },
       showDashboardLink() {
-        switch(this.$router.currentRoute.name) {
-          case "dashboard":
-            return false;
-          case "update-contact":
-            return false;
-          case "create-contact":
-            return false;
-        }
-        return true;
-      },
-      goToContacts() {
-        if(this.$router.currentRoute.name !== "get-all-contacts") {
-          this.$router.push({ name: 'get-all-contacts' });
-        }
+        return !(new RegExp(['dashboard','contact'].join('|')).test(this.$router.currentRoute.name));
       }
     }
   };
