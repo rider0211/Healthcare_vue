@@ -120,7 +120,7 @@
 </template>
 
 <script>
-const FACILITY_TYPE_ALL = 'All Facilities';
+import {FACILITY_TYPES} from '../constants/facilities.const';
 
 export default {
   name: "Dashboard",
@@ -143,8 +143,8 @@ export default {
       statusOptions: [],
       showAdmin,
       showUser,
-      facilityTypes: [FACILITY_TYPE_ALL],
-      facilityTypeSelected: FACILITY_TYPE_ALL,
+      facilityTypes: FACILITY_TYPES,
+      facilityTypeSelected: null,
       showEmailErr: false,
       entities: null,
       sortBy: "updated",
@@ -173,11 +173,6 @@ export default {
           entity.status = "No Previous Check-in"
         }
       }
-      this.updateFacilityTypesList();
-    },
-    updateFacilityTypesList() {
-      // Get all unique facility types from the list of facilities, sort aphabetically, and then append them to an "All Facilities" option
-      this.facilityTypes = [FACILITY_TYPE_ALL].concat([...new Set(this.entities.map(entity => entity.type))].sort())
     },
     sendEmail() {
       // send emails
@@ -196,7 +191,7 @@ export default {
       }
       // send emails
       const payload = {
-        "entityType": this.facilityTypeSelected !== FACILITY_TYPE_ALL ? this.facilityTypeSelected : null
+        "relationshipTitle": [this.facilityTypeSelected]
       };
       this.$root.apiPOSTRequest("/contact/send", payload, this.handleBulkSendResponse)
       // close modal
@@ -216,9 +211,9 @@ export default {
       })
     },
     handleBulkSendResponse(response) {
-      const title = (response && response.data.results) ? 'Success' : 'Error';
-      const variant = (response && response.data.results) ? 'success' : 'danger';
-      const msg = (response && response.data.results) ? `Success: Emails sent to ${response.data.results.total} facilities` : 'Error: Failed to send emails';
+      const title = response.data.results ? 'Success' : 'Error';
+      const variant = response.data.results ? 'success' : 'danger';
+      const msg = response.data.results ? `Success: Emails sent to ${response.data.results.total} facilities` : 'Error: Failed to send emails';
       this.$bvToast.toast(msg, {
         title,
         variant,
