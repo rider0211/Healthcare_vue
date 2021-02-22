@@ -198,7 +198,7 @@
 
 <script>
 import questionReadout from "../components/questionReadout";
-import covidForm from "../components/vaccForm";
+import covidForm from "../components/covidForm";
 import quickForm from "../components/quickForm";
 
 export default {
